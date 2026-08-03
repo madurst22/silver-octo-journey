@@ -1,0 +1,79 @@
+services:
+  origin-a:
+    image: openresty/openresty:alpine
+    hostname: origin-a
+    ports:
+      - "18091:8080"
+    volumes:
+      - ./nginx.origin.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+      - ./lua:/etc/nginx/lua:ro
+
+  origin-b:
+    image: openresty/openresty:alpine
+    hostname: origin-b
+    ports:
+      - "18092:8080"
+    volumes:
+      - ./nginx.origin.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+      - ./lua:/etc/nginx/lua:ro
+  
+  # Edge renamed to be distinguishable by and within region.
+  edge-west-0:
+    image: openresty/openresty:alpine
+    hostname: edge-west-0
+    depends_on:
+      - origin-a
+      - origin-b
+    ports:
+      - "18081:8080"
+    volumes:
+      - ./nginx.edge.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+  
+  # Edge added and renamed to be distinguishable by and within region.
+  edge-west-1:
+    image: openresty/openresty:alpine
+    hostname: edge-west-1
+    depends_on:
+      - origin-a
+      - origin-b
+    ports:
+      - "18083:8080"
+    volumes:
+      - ./nginx.edge.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+  
+  # Edge renamed to be distinguishable by and within region.
+  edge-east-0:
+    image: openresty/openresty:alpine
+    hostname: edge-east-0
+    depends_on:
+      - origin-a
+      - origin-b
+    ports:
+      - "18082:8080"
+    volumes:
+      - ./nginx.edge.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+  
+  # Edge added and renamed to be distinguishable by and within region.
+  edge-east-1:
+    image: openresty/openresty:alpine
+    hostname: edge-east-1
+    depends_on:
+      - origin-a
+      - origin-b
+    ports:
+      - "18084:8080"
+    volumes:
+      - ./nginx.edge.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+
+  load-balancer:
+    image: openresty/openresty:alpine
+    hostname: load-balancer
+    depends_on: # Updated to include all edges.
+      - edge-west-0
+      - edge-east-0
+      - edge-west-1
+      - edge-east-1
+    ports:
+      - "18080:8080"
+    volumes:
+      - ./nginx.loadbalancer.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
