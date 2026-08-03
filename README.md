@@ -30,7 +30,7 @@ specifically Option 1 - Multi-region CDN topology. All code builds from the
 functionality provided in the Step 5: Resilience with Stale Cache and Failover
 Goal part of the tutorial.
 
-The required prerequisites are outlined in Step 0 (accessible to all GT Tech OMSCS
+The required prerequisites are outlined in Step 0 (accessible to all GT OMSCS
 students and staff). They are Docker Engine, Docker Compose v2, curl, and A POSIX-ish shell.
 
 The topology for this extension is built upon running docker compose up in the ternminal.
